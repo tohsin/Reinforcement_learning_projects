@@ -6,12 +6,13 @@ import torch.nn as nn
 import torch.optim as optim
 
 
-class PPOMemoryHandler():
-    def __init__(self, batch_size) -> None:
+
+class PPOMemory:
+    def __init__(self, batch_size):
         self.states = []
         self.probs = []
         self.vals = []
-        self.actions  = []
+        self.actions = []
         self.rewards = []
         self.dones = []
 
@@ -24,22 +25,26 @@ class PPOMemoryHandler():
         np.random.shuffle(indices)
         batches = [indices[i:i+self.batch_size] for i in batch_start]
 
-        return np.array(self.states),np.array(self.actions),\
-            np.array(self.probs), np.array(self.vals),\
-                np.array(self.rewards), np.array(self.dones),batches
-    def store_memory(self, state, prob, val, action,reward,done ):
+        return np.array(self.states),\
+                np.array(self.actions),\
+                np.array(self.probs),\
+                np.array(self.vals),\
+                np.array(self.rewards),\
+                np.array(self.dones),\
+                batches
+
+    def store_memory(self, state, action, probs, vals, reward, done):
         self.states.append(state)
-        self.probs.append(prob)
-        self.vals.append(val)
         self.actions.append(action)
+        self.probs.append(probs)
+        self.vals.append(vals)
         self.rewards.append(reward)
         self.dones.append(done)
 
-
     def clear_memory(self):
         self.states = []
-        self.actions = []
         self.probs = []
-        self.vals = []
+        self.actions = []
         self.rewards = []
-        self.done = []
+        self.dones = []
+        self.vals = []
