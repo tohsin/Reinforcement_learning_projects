@@ -26,6 +26,7 @@ if __name__ == '__main__':
         score = 0
         while not done:
             action, prob, val = agent.choose_action(observation)
+            
             observation_, reward, done, info = env.step(action)
             n_steps+=1
             score+=reward
