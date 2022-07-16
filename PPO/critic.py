@@ -7,12 +7,12 @@ import torch.optim as optim
 from torch.distributions.categorical import Categorical
 
 class CriticNetwork(nn.Module):
-    def __init__(self, input_dims, alpha, fc1_dims = 256,\
-     fc2_dims = 256, check_pooint_dir = 'PPO_algorithm/models/' ) -> None:
+    def __init__(self, input_dims, alpha, model_name : str , fc1_dims = 256,\
+     fc2_dims = 256, check_pooint_dir = 'PPO/models/') -> None:
         super(CriticNetwork, self).__init__()
 
 
-        self.check_point_file = os.path.join(check_pooint_dir, "critic_torch")
+        self.check_point_file = os.path.join(check_pooint_dir, model_name)
         self.critic  = nn.Sequential(
             nn.Linear(*input_dims , fc1_dims),
             nn.ReLU(),
@@ -33,4 +33,5 @@ class CriticNetwork(nn.Module):
         T.save(self.state_dict(), self.check_point_file)
 
     def load_checkpoint(self):
-        T.load_state_dict(T.load(self.check_point_file))
+        self.load_state_dict(T.load(self.check_point_file))
+        # T.load_state_dict(T.load(self.check_point_file))

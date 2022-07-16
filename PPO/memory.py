@@ -5,7 +5,14 @@ import torch as T
 import torch.nn as nn
 import torch.optim as optim
 
-
+class Mem:
+    def __init__(self, state , prob, val ,action, reward, done) -> None:
+        self.state = state
+        self.prob = prob
+        self.val = val
+        self.action = action
+        self.reward = reward
+        self.done = done
 
 class PPOMemory:
     def __init__(self, batch_size):

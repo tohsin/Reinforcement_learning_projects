@@ -7,20 +7,27 @@ import torch as T
 import torch.nn as nn
 import torch.optim as optim
 from torch.distributions.categorical import Categorical
-from agents_actor import ActorNetwork
-from agents_critic import CriticNetwork 
-from ppo_memory import PPOMemory
+from PPO.actor import ActorNetwork
+from PPO.critic import CriticNetwork 
+from PPO.memory import PPOMemory
 class Agent:
-    def __init__(self, n_actions, input_dims,   gamma = 0.99, alpha = 0.0003, gae_lambda = 0.95,  
+    def __init__(self, n_actions, input_dims,  model_name_actor : str, model_name_critic : str, \
+                gamma = 0.99, alpha = 0.0003, gae_lambda = 0.95,  \
                 policy_clip = 0.1, n_epoch = 10,  batch_size = 64):
+        '''
+        parameter 
+            arguments:
+                - model_name_actor : model name for actor to be used in model savind directory
+                - model_name_critic :model name for critic to be used in model savind directory
+        '''
         #self, n_actions, gae_lamda = 0.95, gamma = 0.99, alpha = 0 .0003, policy_clip = 0.2, batch_size = 64, N = 2048 , n_epoch = 10
         self.gamma = gamma
         self.gae_lambda = gae_lambda
         self.policy_clip = policy_clip
         self.n_epoch = n_epoch
 
-        self.actor = ActorNetwork(n_actions, input_dims, alpha)
-        self.critic = CriticNetwork(input_dims, alpha)
+        self.actor = ActorNetwork(n_actions, input_dims, alpha, model_name = model_name_actor)
+        self.critic = CriticNetwork(input_dims, alpha, model_name  = model_name_critic)
         self.memory_handler = PPOMemory( batch_size )
 
     def remember(self, state, action, probs, vals, reward, done):
@@ -31,10 +38,18 @@ class Agent:
         self.actor.save_checkpoint()
         self.critic.save_checkpoint()
 
-    def load_mode(self):
+    def load_model(self):
         print("Load model")
         self.actor.load_checkpoint()
         self.critic.load_checkpoint()
+
+    def play_with_model(self, observation):
+        with T.no_grad():
+            state = T.tensor([observation], dtype=T.float).to(self.actor.device)
+            dist = self.actor(state)
+            action = dist.sample()
+            action =T.squeeze(action).item()
+            return action
 
     def choose_action(self, observation):
         state = T.tensor([observation], dtype=T.float).to(self.actor.device)
@@ -96,6 +111,7 @@ class Agent:
                 total_loss = actor_loss + 0.5*critic_loss
                 self.actor.optimizer.zero_grad()
                 self.critic.optimiser.zero_grad()
+                print("total loss", total_loss.item())
                 total_loss.backward()
                 self.actor.optimizer.step()
                 self.critic.optimiser.step()

@@ -1,4 +1,6 @@
-
 /__pycache__
 /venv
 /PPO_algorithm/__pycache__
+/PPO/__pycache__
+four_in_a_row/__pycache__
+/PPO/models

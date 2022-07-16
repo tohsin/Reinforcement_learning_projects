@@ -8,11 +8,12 @@ from torch.distributions.categorical import Categorical
 
 
 class ActorNetwork(nn.Module):
-    def __init__(self, n_actions, input_dims, alpha,
-            fc1_dims=256, fc2_dims=256, chkpt_dir='PPO_algorithm/models/'):
+    
+    def __init__(self, n_actions, input_dims, alpha,  model_name : str, 
+            fc1_dims=256, fc2_dims=256, chkpt_dir='PPO/models/'):
         super(ActorNetwork, self).__init__()
 
-        self.checkpoint_file = os.path.join(chkpt_dir, 'actor_torch_ppo_clip')
+        self.checkpoint_file = os.path.join(chkpt_dir, model_name)
         self.actor = nn.Sequential(
                 nn.Linear(*input_dims, fc1_dims),
                 nn.ReLU(),

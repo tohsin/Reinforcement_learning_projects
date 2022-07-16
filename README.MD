@@ -7,3 +7,6 @@ Several Reinforcement learning algorithms will be implemented and several starge
 ## Self Play algorith
 
 ## might add genetic algorithms vs rl algorithms to see comperting learning and evolution , importality vs  reproduction
+
+
+remind user to
